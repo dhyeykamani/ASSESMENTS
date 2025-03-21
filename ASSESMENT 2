@@ -1,0 +1,105 @@
+#include<iostream>
+#include<string>
+#include<ctime>
+using namespace std;
+int main()
+{
+	
+	cout << ":::::::::::::::::::: WELCOME TO PATEL BANK ATM ::::::::::::::::::::\n"<<endl;
+	
+
+    // Get the current time
+    std::time_t now = std::time(NULL);  // Use NULL instead of nullptr for older C++ versions
+
+    // Convert it to local time
+    std::tm* local_time = std::localtime(&now);
+
+    // Print the formatted date and time
+    std::cout << "Current Date and Time: " << std::asctime(local_time);
+    
+    std::cout << "\n:::::::::::::::::::: WELCOME TO ATM ::::::::::::::::::::\n " <<endl;
+
+    const int ATM_PIN = 12345;  // Predefined ATM PIN
+    int enteredPin, choice;
+    double balance = 1000.00; // Initial balance
+
+    // Prompt user for PIN
+    cout << "Enter your 5-digit Acc Pin Access Number! : ";
+    cin >> enteredPin;
+
+    // Validate PIN
+    if (enteredPin != ATM_PIN) {
+        cout << "\n You had made your attempt which failed !!! No More attempts allowed!! Sorry!!" << endl;
+        system("pause"); // Keeps window open on Windows
+        return 1; // Exit program
+    }
+
+    // Menu options
+    do {
+        cout << "\n:::::::::::::::::::: ATM MENU ::::::::::::::::::::\n" << endl;
+        cout << "1. Check Balance" << endl;
+        cout << "2. Withdraw Money" << endl;
+        cout << "3. Deposit Money" << endl;
+        cout << "4. Exit" << endl;
+        cout << "Enter your choice: \n";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+            	cout<< "\n:::::::::::::::::::: ATM ACCOUNT BALANCE CHECK SYSTEM  ::::::::::::::::::::\n "<<endl;
+            	cout<< "The Name of the Account Holders are :Dhyey Kamani"<<endl;
+            	cout<< "The Account Holders address is :Ahmedabad"<<endl;
+            	cout<< "The branch location is :Iscon"<<endl;
+            	cout<< "The Account number is :5672\n"<<endl;
+                cout << "Your current balance is: " << balance << endl;
+                break;
+            case 2: {
+            	cout<< "\n:::::::::::::::::::: ATM ACCOUNT WITHDRAWAL SYSTEM ::::::::::::::::::::\n "<<endl;
+            	cout<< "The Name of the Account Holders are :Dhyey Kamani"<<endl;
+            	cout<< "The Account Holders address is :Ahmedabad"<<endl;
+            	cout<< "The branch location is :Iscon"<<endl;
+            	cout<< "The Account number is :5672\n"<<endl;
+            
+                double withdrawAmount;
+                cout << "Enter amount to withdraw: ";
+                cin >> withdrawAmount;
+                if (withdrawAmount > balance) {
+                    cout << "Insufficient  Available balance in your account !" << endl;
+                    cout << "\n\n\t\t Sorry !!" << endl;
+                } else {
+                    balance -= withdrawAmount;
+                    cout << "Withdrawal successful. New balance: " << balance << endl;
+                }
+                break;
+            }
+            case 3: {
+            	cout<< "\n:::::::::::::::::::: ATM ACCOUNT DEPOSIT SYSTEM ::::::::::::::::::::\n "<<endl;
+            	cout<< "The Name of the Account Holders are :Dhyey Kamani"<<endl;
+            	cout<< "The Account Holders address is :Ahmedabad"<<endl;
+            	cout<< "The branch location is :Iscon"<<endl;
+            	cout<< "The Account number is :5672\n"<<endl;
+            	
+            	cout << "Present avaialable balance is : " << balance << endl;
+                double depositAmount;
+                cout << "Enter amount to be deposited: ";
+                cin >> depositAmount;
+                if (depositAmount > 0) {
+                    balance += depositAmount;
+                    cout << "Deposit successful. Your New available balanced Amount is : " << balance << endl;
+                    cout << "\n\n\t\t THANKYOU !" << endl;
+                } else {
+                    cout << "Invalid deposit amount!" << endl;
+                }
+                break;
+            }
+            case 4:
+                cout << "Thank you for using the ATM. Goodbye!" << endl;
+                break;
+            default:
+                cout << "Invalid choice! Please try again." << endl;
+        }
+    } while (choice != 4);
+
+    system("pause"); // Keeps window open on Windows
+    return 0;
+}
