@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Creator Bio-Link</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  /* ── RESET & BASE ─────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0e0e0e;
+    --paper: #f5f0e8;
+    --paper-2: #ede8dc;
+    --accent: #b5540c;
+    --accent-light: #f4e4d4;
+    --gold: #c9933a;
+    --muted: #7a7060;
+    --border: rgba(14,14,14,0.14);
+    --radius: 12px;
+    --danger: #c0392b;
+    --verified: #1a7f5a;
+    --verified-bg: #e6f4ee;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2.5rem 1rem 4rem;
+  }
+
+  /* ── PAGE LAYOUT ───────────────────────────────────────── */
+  .page {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* ── PROFILE HEADER ────────────────────────────────────── */
+  .profile-header {
+    text-align: center;
+    padding: 2.5rem 2rem 2rem;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .avatar-wrap {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 1.25rem;
+  }
+
+  .avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--paper-2);
+    background: var(--paper-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    color: var(--accent);
+    font-weight: 700;
+    overflow: hidden;
+  }
+
+  .creator-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.35rem;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.45s ease, transform 0.45s ease;
+  }
+
+  .creator-name.visible { opacity: 1; transform: translateY(0); }
+
+  .creator-handle {
+    font-size: 0.88rem;
+    font-weight: 400;
+    color: var(--muted);
+    margin-bottom: 0.85rem;
+    letter-spacing: 0.03em;
+    opacity: 0;
+    transition: opacity 0.45s ease 0.1s;
+  }
+
+  .creator-handle.visible { opacity: 1; }
+
+  .creator-bio {
+    font-size: 0.9rem;
+    font-weight: 300;
+    line-height: 1.65;
+    color: #3a3530;
+    max-width: 320px;
+    margin: 0 auto 1.25rem;
+    opacity: 0;
+    transition: opacity 0.45s ease 0.2s;
+  }
+
+  .creator-bio.visible { opacity: 1; }
+
+  /* ── STATS ROW ─────────────────────────────────────────── */
+  .stats-row {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 1.25rem;
+    opacity: 0;
+    transition: opacity 0.45s ease 0.3s;
+  }
+
+  .stats-row.visible { opacity: 1; }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--ink);
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: block;
+    margin-top: 2px;
+  }
+
+  /* ── VERIFIED BADGE ────────────────────────────────────── */
+  .badge-verified {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    background: var(--verified-bg);
+    color: var(--verified);
+    border: 1px solid rgba(26,127,90,0.3);
+    border-radius: 999px;
+    padding: 5px 14px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.5rem;
+    animation: badgeIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+
+  .badge-verified.show { display: inline-flex; }
+
+  @keyframes badgeIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .badge-verified svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+  /* ── DIVIDER ───────────────────────────────────────────── */
+  .section-rule {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 1.6rem 2rem 1rem;
+  }
+
+  .section-rule span {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .rule-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── LINK CARDS ────────────────────────────────────────── */
+  .links-list {
+    padding: 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 30px;
+  }
+
+  .link-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    animation: cardSlide 0.35s ease both;
+    position: relative;
+  }
+
+  .link-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(14,14,14,0.09);
+    border-color: rgba(14,14,14,0.25);
+  }
+
+  @keyframes cardSlide {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .link-icon-box {
+    width: 40px;
+    height: 40px;
+    border-radius: 9px;
+    background: var(--accent-light);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    flex-shrink: 0;
+  }
+
+  .link-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .link-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .link-url {
+    font-size: 0.75rem;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #ccc;
+    padding: 6px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s, background 0.15s;
+    flex-shrink: 0;
+  }
+
+  .delete-btn:hover { color: var(--danger); background: #fdecea; }
+  .delete-btn svg { width: 16px; height: 16px; pointer-events: none; }
+
+  .empty-state {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    display: none;
+  }
+
+  /* ── ADD LINK PANEL ────────────────────────────────────── */
+  .add-panel {
+    margin: 1.5rem 1.5rem 0;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .add-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+
+  .add-panel-header:hover { background: var(--paper); }
+  .add-panel.open .add-panel-header { border-bottom-color: var(--border); }
+
+  .add-panel-title {
+    font-size: 0.88rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--accent);
+  }
+
+  .add-panel-title svg { width: 18px; height: 18px; }
+
+  .chevron {
+    transition: transform 0.25s ease;
+    color: var(--muted);
+  }
+
+  .add-panel.open .chevron { transform: rotate(180deg); }
+
+  .add-form {
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+  }
+
+  .add-panel.open .add-form {
+    padding: 16px;
+    max-height: 300px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  input[type="text"], input[type="url"], select {
+    width: 100%;
+    height: 38px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    color: var(--ink);
+    background: var(--paper);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input:focus, select:focus { border-color: var(--accent); }
+
+  select { cursor: pointer; }
+
+  .add-btn {
+    width: 100%;
+    height: 38px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.18s, transform 0.12s;
+  }
+
+  .add-btn:hover { background: #9c460a; }
+  .add-btn:active { transform: scale(0.98); }
+
+  /* ── FOLLOWER CONTROL (DEMO) ───────────────────────────── */
+  .demo-control {
+    margin: 1.75rem 1.5rem 0;
+    padding: 16px;
+    background: var(--paper-2);
+    border: 1px dashed rgba(14,14,14,0.18);
+    border-radius: var(--radius);
+  }
+
+  .demo-label {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .follower-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .follower-row input[type="range"] {
+    flex: 1;
+    height: auto;
+    background: none;
+    border: none;
+    padding: 0;
+    accent-color: var(--accent);
+  }
+
+  .follower-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    min-width: 56px;
+    text-align: right;
+    color: var(--ink);
+  }
+
+  .threshold-note {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  /* ── FOOTER ────────────────────────────────────────────── */
+  .page-footer {
+    text-align: center;
+    margin-top: 2.5rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+    padding: 0 1.5rem;
+    line-height: 1.8;
+  }
+
+  .storage-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.72rem;
+    color: var(--verified);
+    margin-top: 6px;
+  }
+
+  .storage-indicator svg { width: 12px; height: 12px; }
+</style>
+</head>
+<body>
+
+<div class="page" id="app">
+
+  <!-- ── PROFILE SECTION ──────────────────────────────── -->
+  <header class="profile-header">
+    <div class="avatar-wrap">
+      <div class="avatar" id="avatarEl">AR</div>
+    </div>
+
+    <!-- Verified badge — hidden until follower threshold met -->
+    <div class="badge-verified" id="verifiedBadge">
+      <svg viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="10" r="9" fill="#1a7f5a"/>
+        <path d="M6 10.5l2.5 2.5 5.5-5.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Verified Creator
+    </div>
+
+    <h1 class="creator-name" id="creatorName">—</h1>
+    <p class="creator-handle" id="creatorHandle">—</p>
+    <p class="creator-bio" id="creatorBio">—</p>
+
+    <div class="stats-row" id="statsRow">
+      <div class="stat">
+        <span class="stat-value" id="statFollowers">0</span>
+        <span class="stat-label">Followers</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="statPosts">0</span>
+        <span class="stat-label">Posts</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="statLinks">0</span>
+        <span class="stat-label">Links</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── LINKS SECTION ──────────────────────────────────── -->
+  <div class="section-rule">
+    <div class="rule-line"></div>
+    <span>Links</span>
+    <div class="rule-line"></div>
+  </div>
+
+  <!-- Event delegation target: one listener on this container handles all delete clicks -->
+  <ul class="links-list" id="linksList" role="list"></ul>
+  <p class="empty-state" id="emptyState">No links yet — add your first below ↓</p>
+
+  <!-- ── ADD LINK PANEL ──────────────────────────────────── -->
+  <div class="add-panel" id="addPanel">
+    <div class="add-panel-header" id="addPanelToggle" role="button" tabindex="0" aria-expanded="false">
+      <span class="add-panel-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+        Add a Link
+      </span>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>
+    </div>
+    <div class="add-form" id="addForm">
+      <div class="form-group">
+        <div class="form-row">
+          <input type="text" id="inputTitle" placeholder="Label  (e.g. YouTube)" maxlength="40" />
+          <select id="inputIcon">
+            <option value="🔗">🔗 Generic</option>
+            <option value="▶️">▶️ YouTube</option>
+            <option value="📸">📸 Instagram</option>
+            <option value="𝕏">𝕏 Twitter / X</option>
+            <option value="💼">💼 LinkedIn</option>
+            <option value="🎵">🎵 TikTok</option>
+            <option value="🌐">🌐 Website</option>
+            <option value="📧">📧 Email</option>
+            <option value="🛒">🛒 Shop</option>
+            <option value="📰">📰 Newsletter</option>
+          </select>
+        </div>
+        <input type="url" id="inputUrl" placeholder="https://..." />
+      </div>
+      <button class="add-btn" id="addLinkBtn">Add Link</button>
+    </div>
+  </div>
+
+  <!-- ── DEMO: FOLLOWER SLIDER ───────────────────────────── -->
+  <div class="demo-control">
+    <span class="demo-label">⚡ Live demo — adjust followers</span>
+    <div class="follower-row">
+      <input type="range" id="followerSlider" min="0" max="200000" step="1000" value="8000" />
+      <span class="follower-val" id="followerDisplay">8K</span>
+    </div>
+    <p class="threshold-note">Verified badge appears at 10,000+ followers</p>
+  </div>
+
+  <footer class="page-footer">
+    <div>Links persist across reloads via LocalStorage.</div>
+    <div class="storage-indicator" id="storageIndicator">
+      <svg viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+      </svg>
+      Saved to LocalStorage
+    </div>
+  </footer>
+
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════════
+   MODULE 1 — profileModule
+   Owns profile data and DOM population on page load.
+   Concept: JS execution order, const/let scoping, DOM selection
+   ════════════════════════════════════════════════════════ */
+const profileModule = (() => {
+
+  // const: profile data never needs reassignment
+  const PROFILE = {
+    name: "Dhyey Kamani",
+    handle: "@dhyeyy.develops",
+    bio: "I speak fluent Java,React.Js and sarcasm   Computer Science Student & lifelong debugger. 💻 ",
+    posts: 284,
+    initials: "DK"
+  };
+
+  // Cache DOM references once — don't query repeatedly
+  const nameEl     = document.getElementById("creatorName");
+  const handleEl   = document.getElementById("creatorHandle");
+  const bioEl      = document.getElementById("creatorBio");
+  const statsRow   = document.getElementById("statsRow");
+  const postsEl    = document.getElementById("statPosts");
+  const avatarEl   = document.getElementById("avatarEl");
+
+  function init() {
+    // Populate DOM with profile data
+    nameEl.textContent   = PROFILE.name;
+    handleEl.textContent = PROFILE.handle;
+    bioEl.textContent    = PROFILE.bio;
+    postsEl.textContent  = PROFILE.posts;
+    avatarEl.textContent = PROFILE.initials;
+
+    // Staggered reveal — classes trigger CSS transitions
+    requestAnimationFrame(() => {
+      nameEl.classList.add("visible");
+      handleEl.classList.add("visible");
+      bioEl.classList.add("visible");
+      statsRow.classList.add("visible");
+    });
+  }
+
+  return { init, profile: PROFILE };
+})();
+
+
+/* ════════════════════════════════════════════════════════
+   MODULE 2 — badgeModule
+   Verified badge logic: conditional rendering based on
+   follower count. Truthy/falsy + DOM manipulation.
+   ════════════════════════════════════════════════════════ */
+const badgeModule = (() => {
+
+  const THRESHOLD = 10000; // truthy check: followers > threshold?
+  const badgeEl       = document.getElementById("verifiedBadge");
+  const followerEl    = document.getElementById("statFollowers");
+  const followerSlider = document.getElementById("followerSlider");
+  const followerDisplay = document.getElementById("followerDisplay");
+
+  // let: currentFollowers must be mutable (changes on slider)
+  let currentFollowers = 8000;
+
+  function formatFollowers(n) {
+    if (n >= 1000000) return (n / 1000000).toFixed(1) + "M";
+    if (n >= 1000)    return Math.round(n / 1000) + "K";
+    return String(n);
+  }
+
+  // Core badge logic: one clean conditional, relies on truthy comparison
+  function updateBadge(followers) {
+    currentFollowers = followers;
+    const isVerified = followers >= THRESHOLD; // boolean (truthy or falsy)
+
+    // DOM manipulation: toggle class to show/hide
+    badgeEl.classList.toggle("show", isVerified);
+
+    // Update follower display
+    const formatted = formatFollowers(followers);
+    followerEl.textContent    = formatted;
+    followerDisplay.textContent = formatted;
+  }
+
+  function init() {
+    // Sync slider to initial value
+    followerSlider.value = currentFollowers;
+    updateBadge(currentFollowers);
+
+    // Responds to data change automatically — every input event re-evaluates
+    followerSlider.addEventListener("input", (e) => {
+      updateBadge(Number(e.target.value));
+    });
+  }
+
+  return { init, updateBadge };
+})();
+
+
+/* ════════════════════════════════════════════════════════
+   MODULE 3 + 4 — linksModule
+   Arrays of objects + template literals to render the list.
+   LocalStorage + JSON for persistence.
+   ════════════════════════════════════════════════════════ */
+const linksModule = (() => {
+
+  const STORAGE_KEY = "biolink_links_v1";
+  const listEl      = document.getElementById("linksList");
+  const emptyEl     = document.getElementById("emptyState");
+  const linkCountEl = document.getElementById("statLinks");
+  const storageInd  = document.getElementById("storageIndicator");
+
+  // let: array will be mutated (push / filter)
+  let links = [];
+
+  /* ── LocalStorage helpers ─────────────── */
+  // JSON.stringify converts the JS array → string for storage
+  function save() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(links));
+      flashStorageIndicator();
+    } catch (e) {
+      console.warn("LocalStorage write failed:", e);
+    }
+  }
+
+  // JSON.parse converts the stored string back → JS array
+  function load() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      // If nothing stored, raw is null — falsy — so we default to []
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      console.warn("LocalStorage read/parse failed:", e);
+      return []; // graceful fallback if JSON is corrupt
+    }
+  }
+
+  function flashStorageIndicator() {
+    storageInd.style.opacity = "1";
+    setTimeout(() => { storageInd.style.opacity = "0.5"; }, 1200);
+  }
+
+  /* ── Rendering ────────────────────────── */
+  // Template literal builds each card string from the object's properties
+  function buildCardHTML(link) {
+    return `
+      <li class="link-card" data-id="${link.id}">
+        <div class="link-icon-box" aria-hidden="true">${link.icon}</div>
+        <div class="link-text">
+          <div class="link-title">${escapeHTML(link.title)}</div>
+          <div class="link-url">${escapeHTML(link.url)}</div>
+        </div>
+        <button class="delete-btn" data-id="${link.id}" aria-label="Remove ${escapeHTML(link.title)}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"></path>
+            <path d="M10 11v6M14 11v6"></path>
+          </svg>
+        </button>
+      </li>`;
+  }
+
+  // Loop through array, build HTML for each, join into one string
+  function render() {
+    if (links.length === 0) {
+      listEl.innerHTML = "";
+      emptyEl.style.display = "block";
+    } else {
+      // Array.map → template literal per object → join → set innerHTML once
+      listEl.innerHTML = links.map(buildCardHTML).join("");
+      emptyEl.style.display = "none";
+    }
+    linkCountEl.textContent = links.length;
+  }
+
+  function addLink(title, url, icon) {
+    const newLink = {
+      id: Date.now(),      // unique numeric ID
+      title: title.trim(),
+      url: url.trim(),
+      icon: icon
+    };
+    links.push(newLink);   // mutate the array
+    save();
+    render();
+  }
+
+  function removeLink(id) {
+    // filter returns a new array excluding the deleted item
+    links = links.filter(link => link.id !== Number(id));
+    save();
+    render();
+  }
+
+  function escapeHTML(str) {
+    return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+
+  function init() {
+    links = load(); // restore from LocalStorage on page load
+    render();
+  }
+
+  return { init, addLink, removeLink };
+})();
+
+
+/* ════════════════════════════════════════════════════════
+   MODULE 5 — eventModule
+   Handles UI events: add form, panel toggle, and
+   event delegation for delete buttons.
+   ════════════════════════════════════════════════════════ */
+const eventModule = (() => {
+
+  const addPanel  = document.getElementById("addPanel");
+  const panelToggle = document.getElementById("addPanelToggle");
+  const addBtn    = document.getElementById("addLinkBtn");
+  const inputTitle = document.getElementById("inputTitle");
+  const inputUrl  = document.getElementById("inputUrl");
+  const inputIcon = document.getElementById("inputIcon");
+  const listEl    = document.getElementById("linksList");
+
+  function togglePanel() {
+    const isOpen = addPanel.classList.toggle("open");
+    panelToggle.setAttribute("aria-expanded", isOpen);
+  }
+
+  function handleAddLink() {
+    const title = inputTitle.value.trim();
+    const url   = inputUrl.value.trim();
+    const icon  = inputIcon.value;
+
+    // Falsy guard: empty strings are falsy
+    if (!title || !url) {
+      if (!title) inputTitle.focus();
+      else inputUrl.focus();
+      return;
+    }
+
+    // Prepend https:// if missing
+    const finalUrl = url.startsWith("http") ? url : "https://" + url;
+    linksModule.addLink(title, finalUrl, icon);
+
+    // Reset form
+    inputTitle.value = "";
+    inputUrl.value   = "";
+    inputIcon.selectedIndex = 0;
+    inputTitle.focus();
+  }
+
+  function init() {
+    // Panel toggle
+    panelToggle.addEventListener("click", togglePanel);
+    panelToggle.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); togglePanel(); }
+    });
+
+    // Add button
+    addBtn.addEventListener("click", handleAddLink);
+
+    // Enter key in inputs
+    [inputTitle, inputUrl].forEach(el => {
+      el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") handleAddLink();
+      });
+    });
+
+    /*
+     * EVENT DELEGATION — one listener on the parent <ul> handles
+     * ALL delete buttons, including ones added dynamically later.
+     * We check if the click target (or its ancestor) has data-id.
+     */
+    listEl.addEventListener("click", (e) => {
+      const btn = e.target.closest(".delete-btn");
+      if (!btn) return;                      // click was elsewhere in the list
+      const id = btn.getAttribute("data-id");
+      linksModule.removeLink(id);
+    });
+  }
+
+  return { init };
+})();
+
+
+/* ════════════════════════════════════════════════════════
+   MODULE 6 — App bootstrap
+   Single entry point; each module is isolated and
+   imported only here. Separation of concerns.
+   ════════════════════════════════════════════════════════ */
+(function bootstrap() {
+  profileModule.init();   // 1. Populate profile
+  badgeModule.init();     // 2. Badge + follower slider
+  linksModule.init();     // 3+4. Render links + LocalStorage
+  eventModule.init();     // 5. Wire up all events
+})();
+</script>
+</body>
+</html>
